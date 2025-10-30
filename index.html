@@ -1,74 +1,43 @@
 <!DOCTYPE html>
 <html lang="my">
 <head>
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>Redirecting...</title>
-</head>
-<body style="font-family:system-ui, sans-serif; text-align:center; padding:40px;">
-  <h2>Redirecting to Telegram...</h2>
-  <p>ကျေးဇူးတင်ပါတယ် — ခေတ္တစောင့်ပါ။</p>
+  <meta charset="UTF-8">
+  <title>Redirecting...</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script>
+    // ၁။ UTM parameter တွေထုတ်ယူခြင်း
+    const params = new URLSearchParams(window.location.search);
+    const utm_source = params.get('utm_source');
+    const utm_medium = params.get('utm_medium');
+    const utm_campaign = params.get('utm_campaign');
 
-<script>
-(async function(){
-  // === ဆရာ့ webhook.site URL ထည့်ပါ ===
-  const WEBHOOK_URL = "https://webhook.site/7d1f16d1-04d8-4da4-a3d9-e71e0ee866c1";
+    // ၂။ Webhook.site URL သတ်မှတ်ခြင်း (သင့် URL နဲ့ပြန်ထည့်ပါ)
+    const webhookUrl = "https://webhook.site/9d76544f-aefe-4c71-b5a9-5c7a54867846";
 
-  // === သင့် main Telegram link ထည့်ပါ ===
-  const TELEGRAM_URL = "https://t.me/gb168mm1";
+    // ၃။ JSON data ပြုလုပ်ခြင်း
+    const payload = {
+      source: utm_source,
+      medium: utm_medium,
+      campaign: utm_campaign,
+      timestamp: new Date().toISOString(),
+      userAgent: navigator.userAgent
+    };
 
-  // URL params ဖမ်းယူမယ်
-  const params = new URLSearchParams(window.location.search);
-  const utm_source = params.get("utm_source") || null;
-  const utm_medium = params.get("utm_medium") || null;
-  const utm_campaign = params.get("utm_campaign") || null;
-
-  // ထပ်ထည့်သတ်မှတ်ချင်သူများ (optional)
-  const payload = {
-    utm_source,
-    utm_medium,
-    utm_campaign,
-    referrer: document.referrer || null,
-    userAgent: navigator.userAgent || null,
-    origin: window.location.origin,
-    path: window.location.pathname,
-    fullUrl: window.location.href,
-    timestamp: new Date().toISOString()
-  };
-
-  // Preferred: POST JSON (သင့် webhook.site သည် CORS အထောက်အပံ့ပေးနိုင်ရမည်)
-  try {
-    const res = await fetch(WEBHOOK_URL, {
+    // ၄။ Webhook.site ဆီ POST ပေးခြင်း
+    fetch(webhookUrl, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(payload),
-      // mode: "cors" // default; don't set to 'no-cors' (it silences response)
+      body: JSON.stringify(payload)
+    }).then(() => {
+      // ✅ ၅။ တယ်လီဂရမ်ဆီ redirect
+      window.location.href = "https://t.me/gb168mm1";
+    }).catch(err => {
+      console.error("Error sending data:", err);
+      window.location.href = "https://t.me/gb168mm1";
     });
-    // success or not, ဆက် redirect တွဲပြုလုပ်မယ်
-  } catch (err) {
-    // POST မအောင်မြင်ရင် fallback ကိုသုံးမယ် (sendBeacon or image ping)
-    try {
-      // sendBeacon is reliable for background sending
-      if (navigator.sendBeacon) {
-        const blob = new Blob([JSON.stringify(payload)], {type: 'application/json'});
-        navigator.sendBeacon(WEBHOOK_URL, blob);
-      } else {
-        // Image ping (GET) fallback — URL length محدود ဖြစ်နိုင်
-        const q = new URLSearchParams(payload).toString();
-        const img = new Image();
-        img.src = WEBHOOK_URL + "?" + q;
-      }
-    } catch(e) {
-      // silent
-    }
-  }
-
-  // short delay to allow network send (300-800ms recommended)
-  setTimeout(function(){
-    // final redirect to Telegram
-    window.location.href = TELEGRAM_URL;
-  }, 600);
-})();
-</script>
+  </script>
+</head>
+<body>
+  <p>Redirecting to Telegram…</p>
 </body>
 </html>
