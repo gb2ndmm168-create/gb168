@@ -1,47 +1,45 @@
 <!DOCTYPE html>
-<html lang="my">
+<html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>Redirecting...</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>GB168 Tracking Page</title>
 </head>
 <body>
-  <p>Redirecting to Telegram…</p>
+  <h1>Welcome to GB168 Tracker</h1>
+  <p>Redirecting to Telegram... ⏳</p>
 
   <script>
-    // ၁။ URL parameter တွေထုတ်ယူ
-    const params = new URLSearchParams(window.location.search);
-    const utm_source = params.get('utm_source') || 'unknown';
-    const utm_medium = params.get('utm_medium') || 'unknown';
-    const utm_campaign = params.get('utm_campaign') || 'unknown';
+    // Google Script Web App URL (replace with your own)
+    const webhookUrl = "https://script.google.com/macros/s/AKfycbyWbLIvNwE13lg3bN3whpTv7MyYWZ8DrAfM0UWXHsMsRMjdGjwIWaDp3sbOLjJlPQZ65Q/exec";
 
-    // ၂။ Webhook.site URL (သင့်လင့်ကိုပဲထည့်)
-    const webhookUrl = "https://webhook.site/7d1f16d1-04d8-4da4-a3d9-e71e0ee866c1";
+    function sendTrackingData() {
+      const params = new URLSearchParams(window.location.search);
+      const data = {
+        source: params.get("utm_source"),
+        medium: params.get("utm_medium"),
+        campaign: params.get("utm_campaign"),
+        page: window.location.href,
+        timestamp: new Date().toISOString(),
+        userAgent: navigator.userAgent
+      };
 
-    // ၃။ ပေးပို့မည့် Data
-    const payload = {
-      source: utm_source,
-      medium: utm_medium,
-      campaign: utm_campaign,
-      page: window.location.href,
-      timestamp: new Date().toISOString(),
-      userAgent: navigator.userAgent
-    };
+      fetch(webhookUrl, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(data)
+      })
+      .then(() => {
+        console.log("✅ Sent to Google Sheets");
+        // Wait 2 seconds and redirect
+        setTimeout(() => {
+          window.location.href = "https://t.me/gb168mm1"; // your Telegram channel link
+        }, 2000);
+      })
+      .catch(err => console.error("❌ Error:", err));
+    }
 
-    // ၄။ Webhook.site ဆီ POST ပေးခြင်း
-    fetch(webhookUrl, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      mode: "no-cors", // ✅ မဟုတ်ရင် GitHub Pages က block လုပ်တတ်တယ်
-      body: JSON.stringify(payload)
-    }).catch(err => {
-      console.error("Error:", err);
-    });
-
-    // ၅။ Telegram ဆီ redirect (3 စက္ကန့်နောက်)
-    setTimeout(() => {
-      window.location.href = "https://t.me/gb168mm1";
-    }, 3000);
+    sendTrackingData();
   </script>
 </body>
 </html>
