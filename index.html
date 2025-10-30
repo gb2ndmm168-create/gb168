@@ -4,21 +4,26 @@
   <meta charset="UTF-8">
   <title>Redirecting...</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+<body>
+  <p>Redirecting to Telegram…</p>
+
   <script>
-    // ၁။ UTM parameter တွေထုတ်ယူခြင်း
+    // ၁။ URL parameter တွေထုတ်ယူ
     const params = new URLSearchParams(window.location.search);
-    const utm_source = params.get('utm_source');
-    const utm_medium = params.get('utm_medium');
-    const utm_campaign = params.get('utm_campaign');
+    const utm_source = params.get('utm_source') || 'unknown';
+    const utm_medium = params.get('utm_medium') || 'unknown';
+    const utm_campaign = params.get('utm_campaign') || 'unknown';
 
-    // ၂။ Webhook.site URL သတ်မှတ်ခြင်း (သင့် URL နဲ့ပြန်ထည့်ပါ)
-    const webhookUrl = "	https://webhook.site/7d1f16d1-04d8-4da4-a3d9-e71e0ee866c1";
+    // ၂။ Webhook.site URL (သင့်လင့်ကိုပဲထည့်)
+    const webhookUrl = "https://webhook.site/7d1f16d1-04d8-4da4-a3d9-e71e0ee866c1";
 
-    // ၃။ JSON data ပြုလုပ်ခြင်း
+    // ၃။ ပေးပို့မည့် Data
     const payload = {
       source: utm_source,
       medium: utm_medium,
       campaign: utm_campaign,
+      page: window.location.href,
       timestamp: new Date().toISOString(),
       userAgent: navigator.userAgent
     };
@@ -27,17 +32,16 @@
     fetch(webhookUrl, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
+      mode: "no-cors", // ✅ မဟုတ်ရင် GitHub Pages က block လုပ်တတ်တယ်
       body: JSON.stringify(payload)
-    }).then(() => {
-      // ✅ ၅။ တယ်လီဂရမ်ဆီ redirect
-      window.location.href = "https://t.me/gb168mm1";
     }).catch(err => {
-      console.error("Error sending data:", err);
-      window.location.href = "https://t.me/gb168mm1";
+      console.error("Error:", err);
     });
+
+    // ၅။ Telegram ဆီ redirect (3 စက္ကန့်နောက်)
+    setTimeout(() => {
+      window.location.href = "https://t.me/gb168mm1";
+    }, 3000);
   </script>
-</head>
-<body>
-  <p>Redirecting to Telegram…</p>
 </body>
 </html>
