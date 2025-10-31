@@ -1,74 +1,54 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>GB168 Tracker</title>
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      text-align: center;
-      padding-top: 60px;
-      background: #f4f4f4;
-    }
-    h1 {
-      color: #222;
-    }
-    p {
-      color: #555;
-      font-size: 18px;
-    }
-  </style>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Redirecting...</title>
 </head>
 <body>
-  <h1>Welcome to GB168 Tracker</h1>
-  <p>Redirecting to Telegram... ⏳</p>
+<h3>Redirecting... Please wait</h3>
+<script>
+const telegramLink = "https://t.me/gb168mm1"; // <== Telegram link
+const webhookURL = "	https://webhook.site/7d1f16d1-04d8-4da4-a3d9-e71e0ee866c1"; // <== your webhook.site URL
+const googleScriptURL = "https://script.google.com/macros/s/AKfycbzKaDlkg-lBdF0r6JBbxJF50sfwqL5riCVkaq-Gqw_FWtkbHq7_teeRB4bOYxdMOzvq/exec"; // <== your Google Apps Script URL
 
-  <script>
-    const params = new URLSearchParams(window.location.search);
-    const utm_source = params.get("utm_source") || "unknown";
-    const utm_medium = params.get("utm_medium") || "unknown";
-    const utm_campaign = params.get("utm_campaign") || "unknown";
-    const page = window.location.pathname;
-    const fullUrl = window.location.href;
-    const referrer = document.referrer || "none";
-    const userAgent = navigator.userAgent;
-    const secret_key = "1QTBnzceqoC0Xrvpwzd4hihyzmZ9ql2fgUvU45_Hs8dg";
+const params = new URLSearchParams(window.location.search);
+const utm_source = params.get("utm_source") || "unknown";
+const utm_medium = params.get("utm_medium") || "unknown";
+const utm_campaign = params.get("utm_campaign") || "unknown";
 
-    // သွားမယ့် Telegram link
-    const telegramUrl = "https://t.me/gb168mm1";
+const payload = {
+  timestamp: new Date().toISOString(),
+  utm_source,
+  utm_medium,
+  utm_campaign,
+  page: document.title,
+  fullUrl: window.location.href,
+  referrer: document.referrer,
+  userAgent: navigator.userAgent,
+  secret_key: "gb168_secret"
+};
 
-    // Webhook.site URL
-    const webhookUrl = "	https://webhook.site/7d1f16d1-04d8-4da4-a3d9-e71e0ee866c1";
+// ✅ Send to Webhook.site
+fetch(webhookURL, {
+  method: "POST",
+  headers: { "Content-Type": "application/json" },
+  body: JSON.stringify(payload)
+}).then(r => console.log("Sent to Webhook.site:", r.status))
+.catch(e => console.error("Webhook Error:", e));
 
-    // Data to send
-    const data = {
-      timestamp: new Date().toISOString(),
-      utm_source,
-      utm_medium,
-      utm_campaign,
-      page,
-      fullUrl,
-      referrer,
-      userAgent,
-      secret_key
-    };
+// ✅ Send to Google Sheet
+fetch(googleScriptURL, {
+  method: "POST",
+  mode: "no-cors",
+  headers: { "Content-Type": "application/json" },
+  body: JSON.stringify(payload)
+});
 
-    // Send to Webhook
-    fetch(webhookUrl, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(data)
-    })
-    .then(() => {
-      console.log("Data sent to Webhook!");
-    })
-    .catch(err => console.error("Error:", err));
-
-    // Redirect to Telegram after 3 sec
-    setTimeout(() => {
-      window.location.href = telegramUrl;
-    }, 5000);
-  </script>
+// ✅ Redirect to Telegram after 2 sec
+setTimeout(() => {
+  window.location.href = telegramLink;
+}, 2000);
+</script>
 </body>
 </html>
