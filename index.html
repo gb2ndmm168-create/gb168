@@ -1,53 +1,29 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>GB168 Tracker</title>
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      text-align: center;
-      margin-top: 50px;
-    }
-    h1 {
-      color: #222;
-    }
-  </style>
-</head>
-<body>
-  <h1>Welcome to GB168 Tracker</h1>
-  <p>Redirecting to Telegram... ⏳</p>
+<script>
+const params = new URLSearchParams(window.location.search);
+const utm_source = params.get("utm_source");
+const utm_medium = params.get("utm_medium");
+const utm_campaign = params.get("utm_campaign");
 
-  <script>
-    // ✅ Step 1: Extract UTM parameters from URL
-    const urlParams = new URLSearchParams(window.location.search);
-    const utm_source = urlParams.get('utm_source') || 'unknown';
-    const utm_medium = urlParams.get('utm_medium') || 'unknown';
-    const utm_campaign = urlParams.get('utm_campaign') || 'unknown';
+const data = {
+  utm_source,
+  utm_medium,
+  utm_campaign,
+  page: document.title,
+  fullUrl: window.location.href,
+  referrer: document.referrer,
+  userAgent: navigator.userAgent,
+  secret_key: "gb168_secret_123"
+};
 
-    // ✅ Step 2: Prepare data to send
-    const payload = {
-      utm_source,
-      utm_medium,
-      utm_campaign,
-      timestamp: new Date().toISOString()
-    };
-
-    // ✅ Step 3: Send data to Google Apps Script Web App
-    fetch("https://script.google.com/macros/s/AKfycbxigzQV6QY77UALeoyHSxen4x3Lj9PjxcR8bqfkMGZfbO1KiVYDeEsi5rvMVqP3mLHJGg/exec", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(payload)
-    })
-    .then(res => res.text())
-    .then(data => console.log("✅ Data sent successfully:", data))
-    .catch(err => console.error("❌ Error sending data:", err));
-
-    // ✅ Step 4: Redirect to Telegram after 3 seconds
-    setTimeout(() => {
-      window.location.href = "https://t.me/gb168mm1";
-    }, 3000);
-  </script>
-</body>
-</html>
+// Send to Google Sheets
+fetch("https://script.google.com/macros/s/AKfycbwSOlXW__y5NNsblzr4qynDzRClMvrb5UT97R-pZ5YSTN_lApP99bEFMpvd0bQSjjXd/exec", {
+  method: "POST",
+  headers: {
+    "Content-Type": "application/json"
+  },
+  body: JSON.stringify(data)
+}).then(() => {
+  // Redirect to Telegram
+  window.location.href = "https://t.me/gb168mm1";
+});
+</script>
